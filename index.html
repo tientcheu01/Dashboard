@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Boloungui</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Ubuntu:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f4e9;
+        }
+        
+        .african-pattern-bg {
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iI2U1YzQ4NSIgb3BhY2l0eT0iMC4xIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIi8+PC9zdmc+');
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .housing-card {
+            background: linear-gradient(to bottom right, #ffffff, #f8f4e9);
+        }
+        
+        .scroll-container {
+            scrollbar-width: thin;
+            scrollbar-color: #d4a017 transparent;
+        }
+        
+        .scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .scroll-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .scroll-container::-webkit-scrollbar-thumb {
+            background-color: #d4a017;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="bg-[#1a3a2e] text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-[#d4a017] rounded-full flex items-center justify-center">
+                    <i class="fas fa-home text-xl text-[#1a3a2e]"></i>
+                </div>
+                <h1 class="text-xl font-bold font-['Ubuntu']">BOLOUNGUI</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="hidden md:inline">Kevin M.</span>
+                <button class="p-2 rounded-full hover:bg-[#2d5a46] transition">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="sr-only">Déconnexion</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Welcome Section -->
+        <section class="mb-10 african-pattern-bg rounded-xl p-6 shadow-md">
+            <h2 class="text-2xl md:text-3xl font-bold text-[#1a3a2e] mb-2">Bonjour Kevin !</h2>
+            <p class="text-lg text-[#5c4d3e]">Prêt à trouver ton nouveau logement ?</p>
+        </section>
+
+        <!-- Quick Access Section -->
+        <section class="mb-12">
+            <h2 class="text-xl font-semibold text-[#1a3a2e] mb-4">Accès rapide</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Search Housing -->
+                <a href="#" class="card-hover housing-card rounded-lg p-6 flex flex-col items-center text-center border border-[#e5c485] hover:border-[#d4a017]">
+                    <div class="w-14 h-14 bg-[#e5c485] bg-opacity-30 rounded-full flex items-center justify-center mb-3">
+                        <i class="fas fa-search text-2xl text-[#1a3a2e]"></i>
+                    </div>
+                    <h3 class="font-medium text-[#1a3a2e]">Rechercher un logement</h3>
+                </a>
+                
+                <!-- My Comments -->
+                <a href="#" class="card-hover housing-card rounded-lg p-6 flex flex-col items-center text-center border border-[#e5c485] hover:border-[#d4a017]">
+                    <div class="w-14 h-14 bg-[#e5c485] bg-opacity-30 rounded-full flex items-center justify-center mb-3">
+                        <i class="fas fa-comment text-2xl text-[#1a3a2e]"></i>
+                    </div>
+                    <h3 class="font-medium text-[#1a3a2e]">Mes commentaires</h3>
+                </a>
+                
+                <!-- Favorites -->
+                <a href="#" class="card-hover housing-card rounded-lg p-6 flex flex-col items-center text-center border border-[#e5c485] hover:border-[#d4a017]">
+                    <div class="w-14 h-14 bg-[#e5c485] bg-opacity-30 rounded-full flex items-center justify-center mb-3">
+                        <i class="fas fa-heart text-2xl text-[#1a3a2e]"></i>
+                    </div>
+                    <h3 class="font-medium text-[#1a3a2e]">Mes logements favoris</h3>
+                </a>
+                
+                <!-- Profile -->
+                <a href="#" class="card-hover housing-card rounded-lg p-6 flex flex-col items-center text-center border border-[#e5c485] hover:border-[#d4a017]">
+                    <div class="w-14 h-14 bg-[#e5c485] bg-opacity-30 rounded-full flex items-center justify-center mb-3">
+                        <i class="fas fa-user text-2xl text-[#1a3a2e]"></i>
+                    </div>
+                    <h3 class="font-medium text-[#1a3a2e]">Mon profil</h3>
+                </a>
+            </div>
+        </section>
+
+        <!-- Favorites Section -->
+        <section class="mb-12">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-[#1a3a2e]">Favoris récents</h2>
+                <a href="#" class="text-[#d4a017] font-medium hover:underline">Tout voir</a>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Favorite Item 1 -->
+                <div class="card-hover bg-white rounded-xl overflow-hidden shadow-md border border-[#e5c485]">
+                    <div class="h-40 bg-[#e5c485] bg-opacity-20 relative">
+                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
+                        <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
+                            <i class="fas fa-heart text-[#d4a017]"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-[#1a3a2e] mb-1">Studio moderne à Dakar</h3>
+                        <p class="text-sm text-gray-600 mb-2"><i class="fas fa-map-marker-alt text-[#d4a017] mr-1"></i> Dakar, Sénégal</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm bg-[#e5c485] bg-opacity-30 px-2 py-1 rounded">Studio</span>
+                            <span class="font-bold text-[#1a3a2e]">120 000 FCFA/mois</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Favorite Item 2 -->
+                <div class="card-hover bg-white rounded-xl overflow-hidden shadow-md border border-[#e5c485]">
+                    <div class="h-40 bg-[#e5c485] bg-opacity-20 relative">
+                        <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
+                        <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
+                            <i class="fas fa-heart text-[#d4a017]"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-[#1a3a2e] mb-1">Appartement à Abidjan</h3>
+                        <p class="text-sm text-gray-600 mb-2"><i class="fas fa-map-marker-alt text-[#d4a017] mr-1"></i> Abidjan, Côte d'Ivoire</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm bg-[#e5c485] bg-opacity-30 px-2 py-1 rounded">2 pièces</span>
+                            <span class="font-bold text-[#1a3a2e]">180 000 FCFA/mois</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Favorite Item 3 -->
+                <div class="card-hover bg-white rounded-xl overflow-hidden shadow-md border border-[#e5c485]">
+                    <div class="h-40 bg-[#e5c485] bg-opacity-20 relative">
+                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
+                        <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
+                            <i class="fas fa-heart text-[#d4a017]"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-[#1a3a2e] mb-1">Colocation à Lomé</h3>
+                        <p class="text-sm text-gray-600 mb-2"><i class="fas fa-map-marker-alt text-[#d4a017] mr-1"></i> Lomé, Togo</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm bg-[#e5c485] bg-opacity-30 px-2 py-1 rounded">Colocation</span>
+                            <span class="font-bold text-[#1a3a2e]">75 000 FCFA/mois</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recently Viewed Section -->
+        <section class="mb-12">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-[#1a3a2e]">Derniers logements consultés</h2>
+                <a href="#" class="text-[#d4a017] font-medium hover:underline">Tout voir</a>
+            </div>
+            
+            <div class="relative">
+                <div class="scroll-container overflow-x-auto pb-4">
+                    <div class="flex space-x-4 w-max">
+                        <!-- Viewed Item 1 -->
+                        <div class="card-hover w-64 flex-shrink-0 bg-white rounded-lg overflow-hidden shadow-md border border-[#e5c485]">
+                            <div class="h-32 bg-[#e5c485] bg-opacity-20">
+                                <img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-bold text-[#1a3a2e] mb-1 text-sm">Chambre meublée à Yaoundé</h3>
+                                <p class="text-xs text-gray-500"><i class="far fa-clock text-[#d4a017] mr-1"></i> Consulté hier</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Viewed Item 2 -->
+                        <div class="card-hover w-64 flex-shrink-0 bg-white rounded-lg overflow-hidden shadow-md border border-[#e5c485]">
+                            <div class="h-32 bg-[#e5c485] bg-opacity-20">
+                                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-bold text-[#1a3a2e] mb-1 text-sm">Appartement à Cotonou</h3>
+                                <p class="text-xs text-gray-500"><i class="far fa-clock text-[#d4a017] mr-1"></i> Consulté il y a 2 jours</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Viewed Item 3 -->
+                        <div class="card-hover w-64 flex-shrink-0 bg-white rounded-lg overflow-hidden shadow-md border border-[#e5c485]">
+                            <div class="h-32 bg-[#e5c485] bg-opacity-20">
+                                <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-bold text-[#1a3a2e] mb-1 text-sm">Maison à Ouagadougou</h3>
+                                <p class="text-xs text-gray-500"><i class="far fa-clock text-[#d4a017] mr-1"></i> Consulté il y a 3 jours</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Viewed Item 4 -->
+                        <div class="card-hover w-64 flex-shrink-0 bg-white rounded-lg overflow-hidden shadow-md border border-[#e5c485]">
+                            <div class="h-32 bg-[#e5c485] bg-opacity-20">
+                                <img src="https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-bold text-[#1a3a2e] mb-1 text-sm">Studio à Bamako</h3>
+                                <p class="text-xs text-gray-500"><i class="far fa-clock text-[#d4a017] mr-1"></i> Consulté il y a 5 jours</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Empty State (hidden by default) -->
+                        <div class="w-64 flex-shrink-0 bg-white rounded-lg overflow-hidden shadow-md border border-[#e5c485] flex items-center justify-center hidden">
+                            <div class="p-4 text-center">
+                                <i class="fas fa-home text-3xl text-[#e5c485] mb-2"></i>
+                                <p class="text-sm text-gray-600">Tu n'as pas encore consulté de logement</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#1a3a2e] text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-6">
+                <p class="italic text-[#e5c485]">"L'Afrique de demain se construit dans les foyers d'aujourd'hui."</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2 justify-center md:justify-start">
+                        <div class="w-8 h-8 bg-[#d4a017] rounded-full flex items-center justify-center">
+                            <i class="fas fa-home text-sm text-[#1a3a2e]"></i>
+                        </div>
+                        <span class="font-bold">BOLOUNGUI</span>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-4 mb-4 md:mb-0">
+                    <a href="#" class="hover:text-[#e5c485] transition">Blog</a>
+                    <a href="#" class="hover:text-[#e5c485] transition">FAQ</a>
+                    <a href="#" class="hover:text-[#e5c485] transition">Conditions d'utilisation</a>
+                    <a href="#" class="hover:text-[#e5c485] transition">Politique de confidentialité</a>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <a href="#" class="w-8 h-8 bg-[#e5c485] bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="w-8 h-8 bg-[#e5c485] bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="w-8 h-8 bg-[#e5c485] bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="w-8 h-8 bg-[#e5c485] bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="text-center mt-6 pt-4 border-t border-[#2d5a46]">
+                <p class="text-sm text-[#e5c485]">© 2023 Boloungui. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple script to handle potential empty states
+        document.addEventListener('DOMContentLoaded', function() {
+            // This is just a placeholder for actual functionality
+            // In a real app, you would check if the user has favorites/recent views
+            
+            // Example: Check if recent views container is empty
+            const recentViewsContainer = document.querySelector('.scroll-container > div');
+            if (recentViewsContainer && recentViewsContainer.children.length === 0) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'w-full bg-white rounded-lg p-8 text-center';
+                emptyState.innerHTML = `
+                    <i class="fas fa-home text-4xl text-[#e5c485] mb-4"></i>
+                    <h3 class="text-lg font-medium text-[#1a3a2e] mb-2">Tu n'as pas encore consulté de logement</h3>
+                    <p class="text-gray-600 mb-4">Commence ta recherche dès maintenant !</p>
+                    <a href="#" class="inline-block bg-[#d4a017] text-white px-4 py-2 rounded-lg hover:bg-[#c19115] transition">Rechercher</a>
+                `;
+                recentViewsContainer.appendChild(emptyState);
+            }
+        });
+    </script>
+</body>
+</html>
