@@ -3,315 +3,629 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord - Boloungui</title>
+    <title>Formulaire de Demande Boloungui</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Ubuntu:wght@400;500;700&display=swap');
-        
+        /* Styles de base pour la police et l'arrière-plan */
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f4e9;
+            font-family: 'Inter', sans-serif;
         }
-        
-        .african-pattern-bg {
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iI2U1YzQ4NSIgb3BhY2l0eT0iMC4xIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIi8+PC9zdmc+');
+        /* Ombre personnalisée pour les cartes */
+        .custom-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-        
-        .card-hover {
-            transition: all 0.3s ease;
+        /* Style de focus pour les champs de saisie */
+        .input-focus:focus {
+            border-color: #3b82f6; /* blue-600 */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
-        
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        /* Styles pour la boîte de message personnalisée (succès/erreur) */
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50; /* Vert pour succès */
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
         }
-        
-        .housing-card {
-            background: linear-gradient(to bottom right, #ffffff, #f8f4e9);
+        .message-box.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
-        
-        .scroll-container {
-            scrollbar-width: thin;
-            scrollbar-color: #d4a017 transparent;
+        .message-box.error {
+            background-color: #f44336; /* Rouge pour erreur */
         }
-        
-        .scroll-container::-webkit-scrollbar {
-            height: 6px;
+        .message-box-icon {
+            margin-right: 10px;
         }
-        
-        .scroll-container::-webkit-scrollbar-track {
-            background: transparent;
+        /* Masque les étapes du formulaire par défaut */
+        .form-step {
+            display: none;
         }
-        
-        .scroll-container::-webkit-scrollbar-thumb {
-            background-color: #d4a017;
-            border-radius: 20px;
+        /* Affiche l'étape active */
+        .form-step.active {
+            display: block;
+        }
+        /* Styles pour le spinner de chargement */
+        .progress-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="bg-gray-50 min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="bg-[#1a3a2e] text-white shadow-md">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <div class="w-10 h-10 bg-[#d4a017] rounded-full flex items-center justify-center">
-                    <i class="fas fa-home text-xl text-[#1a3a2e]"></i>
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <h1 class="ml-2 text-xl font-semibold text-gray-900">Boloungui - Formulaire de Demande</h1>
                 </div>
-                <h1 class="text-xl font-bold font-['Ubuntu']">BOLOUNGUI</h1>
-            </div>
-            <div class="flex items-center space-x-4">
-                <span class="hidden md:inline">Kevin M.</span>
-                <button class="p-2 rounded-full hover:bg-[#2d5a46] transition">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span class="sr-only">Déconnexion</span>
-                </button>
+                <div class="hidden md:block">
+                    <span class="text-sm text-gray-500">Processus de demande sécurisé</span>
+                </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
-        <!-- Welcome Section -->
-        <section class="mb-10 african-pattern-bg rounded-xl p-6 shadow-md">
-            <h2 class="text-2xl md:text-3xl font-bold text-[#1a3a2e] mb-2">Bonjour Kevin !</h2>
-            <p class="text-lg text-[#5c4d3e]">Prêt à trouver ton nouveau logement ?</p>
-        </section>
-
-        <!-- Quick Access Section -->
-        <section class="mb-12">
-            <h2 class="text-xl font-semibold text-[#1a3a2e] mb-4">Accès rapide</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Search Housing -->
-                <a href="#" class="card-hover housing-card rounded-lg p-6 flex flex-col items-center text-center border border-[#e5c485] hover:border-[#d4a017]">
-                    <div class="w-14 h-14 bg-[#e5c485] bg-opacity-30 rounded-full flex items-center justify-center mb-3">
-                        <i class="fas fa-search text-2xl text-[#1a3a2e]"></i>
-                    </div>
-                    <h3 class="font-medium text-[#1a3a2e]">Rechercher un logement</h3>
-                </a>
-                
-                <!-- My Comments -->
-                <a href="#" class="card-hover housing-card rounded-lg p-6 flex flex-col items-center text-center border border-[#e5c485] hover:border-[#d4a017]">
-                    <div class="w-14 h-14 bg-[#e5c485] bg-opacity-30 rounded-full flex items-center justify-center mb-3">
-                        <i class="fas fa-comment text-2xl text-[#1a3a2e]"></i>
-                    </div>
-                    <h3 class="font-medium text-[#1a3a2e]">Mes commentaires</h3>
-                </a>
-                
-                <!-- Favorites -->
-                <a href="#" class="card-hover housing-card rounded-lg p-6 flex flex-col items-center text-center border border-[#e5c485] hover:border-[#d4a017]">
-                    <div class="w-14 h-14 bg-[#e5c485] bg-opacity-30 rounded-full flex items-center justify-center mb-3">
-                        <i class="fas fa-heart text-2xl text-[#1a3a2e]"></i>
-                    </div>
-                    <h3 class="font-medium text-[#1a3a2e]">Mes logements favoris</h3>
-                </a>
-                
-                <!-- Profile -->
-                <a href="#" class="card-hover housing-card rounded-lg p-6 flex flex-col items-center text-center border border-[#e5c485] hover:border-[#d4a017]">
-                    <div class="w-14 h-14 bg-[#e5c485] bg-opacity-30 rounded-full flex items-center justify-center mb-3">
-                        <i class="fas fa-user text-2xl text-[#1a3a2e]"></i>
-                    </div>
-                    <h3 class="font-medium text-[#1a3a2e]">Mon profil</h3>
-                </a>
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-lg font-medium text-gray-900">Votre Demande</h2>
+                <span id="progress-text" class="text-sm font-medium text-blue-600">Étape 1 sur 4</span>
             </div>
-        </section>
-
-        <!-- Favorites Section -->
-        <section class="mb-12">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-[#1a3a2e]">Favoris récents</h2>
-                <a href="#" class="text-[#d4a017] font-medium hover:underline">Tout voir</a>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-in-out" style="width: 25%"></div>
             </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Favorite Item 1 -->
-                <div class="card-hover bg-white rounded-xl overflow-hidden shadow-md border border-[#e5c485]">
-                    <div class="h-40 bg-[#e5c485] bg-opacity-20 relative">
-                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
-                        <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
-                            <i class="fas fa-heart text-[#d4a017]"></i>
+        </div>
+
+        <!-- Form Container -->
+        <div class="bg-white rounded-xl custom-shadow overflow-hidden">
+            <!-- Form Header -->
+            <div class="bg-blue-600 px-6 py-4">
+                <h3 id="form-header-title" class="text-lg font-semibold text-white">Type de Demande</h3>
+                <p id="form-header-description" class="text-blue-100 text-sm mt-1">Veuillez spécifier la nature de votre demande.</p>
+            </div>
+
+            <!-- Form Content -->
+            <div class="p-6 md:p-8">
+                <form id="bolounguiForm">
+                    <!-- Step 1: Type de Demande -->
+                    <div id="step1" class="form-step active">
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">S'agit-il : <span class="text-red-500">*</span></label>
+                            <div class="mt-2 space-y-2">
+                                <div class="flex items-center">
+                                    <input type="radio" id="requestType1" name="requestType" value="Première demande" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="requestType1" class="ml-3 block text-sm font-medium text-gray-700">D'une première demande</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="requestType2" name="requestType" value="Renouvellement d'une demande en cours" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="requestType2" class="ml-3 block text-sm font-medium text-gray-700">Du renouvellement d'une demande en cours</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="requestType3" name="requestType" value="Modification d'une demande en cours" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="requestType3" class="ml-3 block text-sm font-medium text-gray-700">D'une modification d'une demande en cours</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="flex flex-col sm:flex-row justify-end gap-3">
+                            <button type="button" class="px-6 py-3 bg-blue-600 rounded-lg text-white font-medium hover:bg-blue-700 transition duration-150 flex items-center justify-center" onclick="nextStep()">
+                                Continuer
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Vos Coordonnées -->
+                    <div id="step2" class="form-step">
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vos coordonnées : <span class="text-red-500">*</span></label>
+                            <div class="mt-2 space-y-2">
+                                <div class="flex items-center">
+                                    <input type="radio" id="civilityM" name="civility" value="Monsieur" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="civilityM" class="ml-3 block text-sm font-medium text-gray-700">Monsieur</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="civilityF" name="civility" value="Madame" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="civilityF" class="ml-3 block text-sm font-medium text-gray-700">Madame</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Nom : <span class="text-red-500">*</span></label>
+                            <input type="text" id="lastName" name="lastName" class="input-focus w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none transition duration-150" required>
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">Prénom : <span class="text-red-500">*</span></label>
+                            <input type="text" id="firstName" name="firstName" class="input-focus w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none transition duration-150" required>
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone : <span class="text-red-500">*</span></label>
+                            <input type="tel" id="phone" name="phone" class="input-focus w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none transition duration-150" required>
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail Personnel : <span class="text-red-500">*</span></label>
+                            <input type="email" id="email" name="email" class="input-focus w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none transition duration-150" required>
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="otherContact" class="block text-sm font-medium text-gray-700 mb-1">Autre contact :</label>
+                            <input type="text" id="otherContact" name="otherContact" class="input-focus w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none transition duration-150">
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Acceptez-vous de recevoir des informations par Mail : <span class="text-red-500">*</span></label>
+                            <div class="mt-2 space-y-2">
+                                <div class="flex items-center">
+                                    <input type="radio" id="receiveMailYes" name="receiveMailInfo" value="Oui" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="receiveMailYes" class="ml-3 block text-sm font-medium text-gray-700">Oui</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="receiveMailNo" name="receiveMailInfo" value="Non" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="receiveMailNo" class="ml-3 block text-sm font-medium text-gray-700">Non</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="cityOfResidence" class="block text-sm font-medium text-gray-700 mb-1">Ville de résidence : <span class="text-red-500">*</span></label>
+                            <input type="text" id="cityOfResidence" name="cityOfResidence" class="input-focus w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none transition duration-150" required>
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="flex flex-col sm:flex-row justify-between gap-3">
+                            <button type="button" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition duration-150 flex items-center justify-center" onclick="prevStep()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                                </svg>
+                                Précédent
+                            </button>
+                            <button type="button" class="px-6 py-3 bg-blue-600 rounded-lg text-white font-medium hover:bg-blue-700 transition duration-150 flex items-center justify-center" onclick="nextStep()">
+                                Continuer
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Choix de l'École et Logement -->
+                    <div id="step3" class="form-step">
+                        <div class="mb-6">
+                            <label for="schoolCampus" class="block text-sm font-medium text-gray-700 mb-1">École et Campus choisis : <span class="text-red-500">*</span></label>
+                            <input type="text" id="schoolCampus" name="schoolCampus" class="input-focus w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none transition duration-150" required>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Veuillez définir votre budget de logement en Euro : <span class="text-red-500">*</span></label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="budgetMin" class="block text-xs font-medium text-gray-500 mb-1">Min :</label>
+                                    <input type="number" id="budgetMin" name="budgetMin" class="input-focus w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none transition duration-150" required min="0">
+                                </div>
+                                <div>
+                                    <label for="budgetMax" class="block text-xs font-medium text-gray-500 mb-1">Max :</label>
+                                    <input type="number" id="budgetMax" name="budgetMax" class="input-focus w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none transition duration-150" required min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Type de résidence : <span class="text-red-500">*</span></label>
+                            <div class="mt-2 space-y-2">
+                                <div class="flex items-center">
+                                    <input type="radio" id="residenceType1" name="residenceType" value="Dans une cité privée" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="residenceType1" class="ml-3 block text-sm font-medium text-gray-700">Dans une cité privée</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="residenceType2" name="residenceType" value="En collocation" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="residenceType2" class="ml-3 block text-sm font-medium text-gray-700">En collocation (appartement/maison)</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="residenceType3" name="residenceType" value="En location seul" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="residenceType3" class="ml-3 block text-sm font-medium text-gray-700">En location seul (appartement/studio)</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="residenceType4" name="residenceType" value="Dans une maison en collocation" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="residenceType4" class="ml-3 block text-sm font-medium text-gray-700">Dans une maison (en collocation)</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="residenceType5" name="residenceType" value="Dans une maison en location seul" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="residenceType5" class="ml-3 block text-sm font-medium text-gray-700">Dans une maison (en location seul)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="flex flex-col sm:flex-row justify-between gap-3">
+                            <button type="button" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition duration-150 flex items-center justify-center" onclick="prevStep()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                                </svg>
+                                Précédent
+                            </button>
+                            <button type="button" class="px-6 py-3 bg-blue-600 rounded-lg text-white font-medium hover:bg-blue-700 transition duration-150 flex items-center justify-center" onclick="nextStep()">
+                                Continuer
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Garant et Recommandation -->
+                    <div id="step4" class="form-step">
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Garant : <span class="text-red-500">*</span></label>
+                            <div class="mt-2 space-y-2">
+                                <div class="flex items-center">
+                                    <input type="radio" id="guarantorCameroon" name="guarantor" value="Le bénéficiaire dispose d’un garant physique au Cameroun" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="guarantorCameroon" class="ml-3 block text-sm font-medium text-gray-700">Le bénéficiaire dispose d’un garant physique au Cameroun</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="guarantorFrance" name="guarantor" value="Le bénéficiaire dispose d’un garant physique en France" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300" required>
+                                    <label for="guarantorFrance" class="ml-3 block text-sm font-medium text-gray-700">Le bénéficiaire dispose d’un garant physique en France</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="representativeName" class="block text-sm font-medium text-gray-700 mb-1">Nom de votre représentant (celui qui vous a recommandé BOLOUNGUI) : <span class="text-red-500">*</span></label>
+                            <input type="text" id="representativeName" name="representativeName" class="input-focus w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none transition duration-150" required>
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="flex flex-col sm:flex-row justify-between gap-3">
+                            <button type="button" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition duration-150 flex items-center justify-center" onclick="prevStep()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                                </svg>
+                                Précédent
+                            </button>
+                            <button type="button" class="px-6 py-3 bg-blue-600 rounded-lg text-white font-medium hover:bg-blue-700 transition duration-150 flex items-center justify-center" onclick="nextStep()">
+                                Réviser et Soumettre
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Révision et Soumission -->
+                    <div id="step5" class="form-step">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4">Vérifiez vos informations</h4>
+
+                        <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <h5 class="font-medium text-gray-800 mb-2">Type de Demande</h5>
+                            <p class="text-sm text-gray-700"><span class="font-semibold">Type :</span> <span id="reviewRequestType"></span></p>
+                        </div>
+
+                        <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <h5 class="font-medium text-gray-800 mb-2">Vos Coordonnées</h5>
+                            <p class="text-sm text-gray-700 mb-1"><span class="font-semibold">Civilité :</span> <span id="reviewCivility"></span></p>
+                            <p class="text-sm text-gray-700 mb-1"><span class="font-semibold">Nom :</span> <span id="reviewLastName"></span></p>
+                            <p class="text-sm text-gray-700 mb-1"><span class="font-semibold">Prénom :</span> <span id="reviewFirstName"></span></p>
+                            <p class="text-sm text-gray-700 mb-1"><span class="font-semibold">Téléphone :</span> <span id="reviewPhone"></span></p>
+                            <p class="text-sm text-gray-700 mb-1"><span class="font-semibold">E-mail Personnel :</span> <span id="reviewEmail"></span></p>
+                            <p class="text-sm text-gray-700 mb-1"><span class="font-semibold">Autre contact :</span> <span id="reviewOtherContact"></span></p>
+                            <p class="text-sm text-gray-700 mb-1"><span class="font-semibold">Recevoir infos par Mail :</span> <span id="reviewReceiveMailInfo"></span></p>
+                            <p class="text-sm text-gray-700"><span class="font-semibold">Ville de résidence :</span> <span id="reviewCityOfResidence"></span></p>
+                        </div>
+
+                        <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <h5 class="font-medium text-gray-800 mb-2">Choix de l'École et Logement</h5>
+                            <p class="text-sm text-gray-700 mb-1"><span class="font-semibold">École et Campus :</span> <span id="reviewSchoolCampus"></span></p>
+                            <p class="text-sm text-gray-700 mb-1"><span class="font-semibold">Budget Logement (Min) :</span> <span id="reviewBudgetMin"></span> €</p>
+                            <p class="text-sm text-gray-700 mb-1"><span class="font-semibold">Budget Logement (Max) :</span> <span id="reviewBudgetMax"></span> €</p>
+                            <p class="text-sm text-gray-700"><span class="font-semibold">Type de Résidence :</span> <span id="reviewResidenceType"></span></p>
+                        </div>
+
+                        <div class="mb-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <h5 class="font-medium text-gray-800 mb-2">Garant et Recommandation</h5>
+                            <p class="text-sm text-gray-700 mb-1"><span class="font-semibold">Garant :</span> <span id="reviewGuarantor"></span></p>
+                            <p class="text-sm text-gray-700"><span class="font-semibold">Nom du représentant :</span> <span id="reviewRepresentativeName"></span></p>
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="flex flex-col sm:flex-row justify-between gap-3">
+                            <button type="button" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition duration-150 flex items-center justify-center" onclick="prevStep()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                                </svg>
+                                Précédent
+                            </button>
+                            <button type="submit" class="px-6 py-3 bg-blue-600 rounded-lg text-white font-medium hover:bg-blue-700 transition duration-150 flex items-center justify-center">
+                                Soumettre la Demande
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Success Message -->
+                    <div id="successMessage" class="hidden text-center py-8">
+                        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-4xl mx-auto mb-6">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Demande Soumise !</h3>
+                        <p class="text-gray-600 mb-6 max-w-md mx-auto">Merci d'avoir complété votre demande. Nous examinerons vos informations et vous contacterons bientôt.</p>
+                        <button onclick="resetForm()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium">
+                            Faire une nouvelle demande
                         </button>
                     </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-[#1a3a2e] mb-1">Studio moderne à Dakar</h3>
-                        <p class="text-sm text-gray-600 mb-2"><i class="fas fa-map-marker-alt text-[#d4a017] mr-1"></i> Dakar, Sénégal</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm bg-[#e5c485] bg-opacity-30 px-2 py-1 rounded">Studio</span>
-                            <span class="font-bold text-[#1a3a2e]">120 000 FCFA/mois</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Favorite Item 2 -->
-                <div class="card-hover bg-white rounded-xl overflow-hidden shadow-md border border-[#e5c485]">
-                    <div class="h-40 bg-[#e5c485] bg-opacity-20 relative">
-                        <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
-                        <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
-                            <i class="fas fa-heart text-[#d4a017]"></i>
-                        </button>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-[#1a3a2e] mb-1">Appartement à Abidjan</h3>
-                        <p class="text-sm text-gray-600 mb-2"><i class="fas fa-map-marker-alt text-[#d4a017] mr-1"></i> Abidjan, Côte d'Ivoire</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm bg-[#e5c485] bg-opacity-30 px-2 py-1 rounded">2 pièces</span>
-                            <span class="font-bold text-[#1a3a2e]">180 000 FCFA/mois</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Favorite Item 3 -->
-                <div class="card-hover bg-white rounded-xl overflow-hidden shadow-md border border-[#e5c485]">
-                    <div class="h-40 bg-[#e5c485] bg-opacity-20 relative">
-                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
-                        <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
-                            <i class="fas fa-heart text-[#d4a017]"></i>
-                        </button>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-[#1a3a2e] mb-1">Colocation à Lomé</h3>
-                        <p class="text-sm text-gray-600 mb-2"><i class="fas fa-map-marker-alt text-[#d4a017] mr-1"></i> Lomé, Togo</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm bg-[#e5c485] bg-opacity-30 px-2 py-1 rounded">Colocation</span>
-                            <span class="font-bold text-[#1a3a2e]">75 000 FCFA/mois</span>
-                        </div>
-                    </div>
-                </div>
+                </form>
             </div>
-        </section>
-
-        <!-- Recently Viewed Section -->
-        <section class="mb-12">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-[#1a3a2e]">Derniers logements consultés</h2>
-                <a href="#" class="text-[#d4a017] font-medium hover:underline">Tout voir</a>
-            </div>
-            
-            <div class="relative">
-                <div class="scroll-container overflow-x-auto pb-4">
-                    <div class="flex space-x-4 w-max">
-                        <!-- Viewed Item 1 -->
-                        <div class="card-hover w-64 flex-shrink-0 bg-white rounded-lg overflow-hidden shadow-md border border-[#e5c485]">
-                            <div class="h-32 bg-[#e5c485] bg-opacity-20">
-                                <img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
-                            </div>
-                            <div class="p-4">
-                                <h3 class="font-bold text-[#1a3a2e] mb-1 text-sm">Chambre meublée à Yaoundé</h3>
-                                <p class="text-xs text-gray-500"><i class="far fa-clock text-[#d4a017] mr-1"></i> Consulté hier</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Viewed Item 2 -->
-                        <div class="card-hover w-64 flex-shrink-0 bg-white rounded-lg overflow-hidden shadow-md border border-[#e5c485]">
-                            <div class="h-32 bg-[#e5c485] bg-opacity-20">
-                                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
-                            </div>
-                            <div class="p-4">
-                                <h3 class="font-bold text-[#1a3a2e] mb-1 text-sm">Appartement à Cotonou</h3>
-                                <p class="text-xs text-gray-500"><i class="far fa-clock text-[#d4a017] mr-1"></i> Consulté il y a 2 jours</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Viewed Item 3 -->
-                        <div class="card-hover w-64 flex-shrink-0 bg-white rounded-lg overflow-hidden shadow-md border border-[#e5c485]">
-                            <div class="h-32 bg-[#e5c485] bg-opacity-20">
-                                <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
-                            </div>
-                            <div class="p-4">
-                                <h3 class="font-bold text-[#1a3a2e] mb-1 text-sm">Maison à Ouagadougou</h3>
-                                <p class="text-xs text-gray-500"><i class="far fa-clock text-[#d4a017] mr-1"></i> Consulté il y a 3 jours</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Viewed Item 4 -->
-                        <div class="card-hover w-64 flex-shrink-0 bg-white rounded-lg overflow-hidden shadow-md border border-[#e5c485]">
-                            <div class="h-32 bg-[#e5c485] bg-opacity-20">
-                                <img src="https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Logement" class="w-full h-full object-cover">
-                            </div>
-                            <div class="p-4">
-                                <h3 class="font-bold text-[#1a3a2e] mb-1 text-sm">Studio à Bamako</h3>
-                                <p class="text-xs text-gray-500"><i class="far fa-clock text-[#d4a017] mr-1"></i> Consulté il y a 5 jours</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Empty State (hidden by default) -->
-                        <div class="w-64 flex-shrink-0 bg-white rounded-lg overflow-hidden shadow-md border border-[#e5c485] flex items-center justify-center hidden">
-                            <div class="p-4 text-center">
-                                <i class="fas fa-home text-3xl text-[#e5c485] mb-2"></i>
-                                <p class="text-sm text-gray-600">Tu n'as pas encore consulté de logement</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-[#1a3a2e] text-white py-8">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-6">
-                <p class="italic text-[#e5c485]">"L'Afrique de demain se construit dans les foyers d'aujourd'hui."</p>
-            </div>
-            
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <div class="flex items-center space-x-2 justify-center md:justify-start">
-                        <div class="w-8 h-8 bg-[#d4a017] rounded-full flex items-center justify-center">
-                            <i class="fas fa-home text-sm text-[#1a3a2e]"></i>
-                        </div>
-                        <span class="font-bold">BOLOUNGUI</span>
-                    </div>
+                <p class="text-sm text-gray-500">© 2023 Boloungui. Tous droits réservés.</p>
+                <div class="mt-4 md:mt-0">
+                    <a href="#" class="text-sm text-gray-500 hover:text-gray-700 mr-4">Confidentialité</a>
+                    <a href="#" class="text-sm text-gray-500 hover:text-gray-700 mr-4">Conditions</a>
+                    <a href="#" class="text-sm text-gray-500 hover:text-gray-700">Aide</a>
                 </div>
-                
-                <div class="flex flex-wrap justify-center gap-4 mb-4 md:mb-0">
-                    <a href="#" class="hover:text-[#e5c485] transition">Blog</a>
-                    <a href="#" class="hover:text-[#e5c485] transition">FAQ</a>
-                    <a href="#" class="hover:text-[#e5c485] transition">Conditions d'utilisation</a>
-                    <a href="#" class="hover:text-[#e5c485] transition">Politique de confidentialité</a>
-                </div>
-                
-                <div class="flex space-x-4">
-                    <a href="#" class="w-8 h-8 bg-[#e5c485] bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="#" class="w-8 h-8 bg-[#e5c485] bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="#" class="w-8 h-8 bg-[#e5c485] bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="#" class="w-8 h-8 bg-[#e5c485] bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="text-center mt-6 pt-4 border-t border-[#2d5a46]">
-                <p class="text-sm text-[#e5c485]">© 2023 Boloungui. Tous droits réservés.</p>
             </div>
         </div>
     </footer>
 
+    <!-- Custom Message Box -->
+    <div id="messageBox" class="message-box">
+        <svg id="messageBoxIcon" class="message-box-icon h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>
+        <span id="messageBoxText"></span>
+    </div>
+
     <script>
-        // Simple script to handle potential empty states
-        document.addEventListener('DOMContentLoaded', function() {
-            // This is just a placeholder for actual functionality
-            // In a real app, you would check if the user has favorites/recent views
-            
-            // Example: Check if recent views container is empty
-            const recentViewsContainer = document.querySelector('.scroll-container > div');
-            if (recentViewsContainer && recentViewsContainer.children.length === 0) {
-                const emptyState = document.createElement('div');
-                emptyState.className = 'w-full bg-white rounded-lg p-8 text-center';
-                emptyState.innerHTML = `
-                    <i class="fas fa-home text-4xl text-[#e5c485] mb-4"></i>
-                    <h3 class="text-lg font-medium text-[#1a3a2e] mb-2">Tu n'as pas encore consulté de logement</h3>
-                    <p class="text-gray-600 mb-4">Commence ta recherche dès maintenant !</p>
-                    <a href="#" class="inline-block bg-[#d4a017] text-white px-4 py-2 rounded-lg hover:bg-[#c19115] transition">Rechercher</a>
-                `;
-                recentViewsContainer.appendChild(emptyState);
+        let currentStep = 1;
+        const totalSteps = 4; // Mise à jour du nombre total d'étapes
+
+        // Éléments DOM pour les étapes du formulaire
+        const formSteps = {
+            1: document.getElementById('step1'),
+            2: document.getElementById('step2'),
+            3: document.getElementById('step3'),
+            4: document.getElementById('step4'),
+            5: document.getElementById('step5'), // Étape de révision
+            'success': document.getElementById('successMessage') // Message de succès
+        };
+
+        // Éléments DOM pour la barre de progression
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+
+        // Éléments DOM pour l'en-tête du formulaire
+        const formHeaderTitle = document.getElementById('form-header-title');
+        const formHeaderDescription = document.getElementById('form-header-description');
+
+        // Éléments DOM pour la boîte de message personnalisée
+        const messageBox = document.getElementById('messageBox');
+        const messageBoxText = document.getElementById('messageBoxText');
+        const messageBoxIcon = document.getElementById('messageBoxIcon');
+
+        // Fonction pour afficher une boîte de message personnalisée
+        function showMessage(message, type = 'success') {
+            messageBoxText.textContent = message;
+            messageBox.className = 'message-box show'; // Réinitialise les classes et ajoute 'show'
+            messageBoxIcon.innerHTML = ''; // Efface l'icône précédente
+
+            if (type === 'success') {
+                messageBox.classList.add('bg-green-500');
+                messageBox.classList.remove('bg-red-500');
+                messageBoxIcon.innerHTML = `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />`;
+            } else if (type === 'error') {
+                messageBox.classList.add('bg-red-500');
+                messageBox.classList.remove('bg-green-500');
+                messageBoxIcon.innerHTML = `<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a1 1 0 00-1 1v3H6a1 1 0 100 2h3v3a1 1 0 102 0v-3h3a1 1 0 100-2h-3V6a1 1 0 00-1-1z" clip-rule="evenodd" />`;
             }
+
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 3000); // Masquer après 3 secondes
+        }
+
+        // Met à jour l'interface utilisateur en fonction de l'étape actuelle
+        function updateFormUI() {
+            // Masque toutes les étapes et le message de succès
+            Object.values(formSteps).forEach(step => {
+                if (step) step.classList.remove('active');
+            });
+
+            // Affiche l'étape actuelle ou le message de succès
+            if (formSteps[currentStep]) {
+                formSteps[currentStep].classList.add('active');
+            }
+
+            // Met à jour la barre de progression
+            const progressPercentage = (currentStep / totalSteps) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+            progressText.textContent = `Étape ${currentStep} sur ${totalSteps}`;
+
+            // Met à jour le titre et la description de l'en-tête du formulaire
+            switch (currentStep) {
+                case 1:
+                    formHeaderTitle.textContent = "Type de Demande";
+                    formHeaderDescription.textContent = "Veuillez spécifier la nature de votre demande.";
+                    break;
+                case 2:
+                    formHeaderTitle.textContent = "Vos Coordonnées";
+                    formHeaderDescription.textContent = "Veuillez fournir vos informations personnelles et de contact.";
+                    break;
+                case 3:
+                    formHeaderTitle.textContent = "Choix de l'École et Logement";
+                    formHeaderDescription.textContent = "Indiquez l'école/campus choisi et votre budget logement.";
+                    break;
+                case 4:
+                    formHeaderTitle.textContent = "Garant et Recommandation";
+                    formHeaderDescription.textContent = "Informations sur votre garant et la personne qui vous a recommandé.";
+                    break;
+                case 5: // Étape de révision
+                    formHeaderTitle.textContent = "Révision et Soumission";
+                    formHeaderDescription.textContent = "Veuillez vérifier toutes les informations avant de soumettre.";
+                    populateReviewStep(); // Peuple l'étape de révision
+                    break;
+                case 'success':
+                    formHeaderTitle.textContent = "Demande Soumise !";
+                    formHeaderDescription.textContent = "Votre demande a été envoyée avec succès.";
+                    break;
+            }
+        }
+
+        // Valide les champs de l'étape actuelle
+        function validateStep(step) {
+            let isValid = true;
+            const currentStepElement = formSteps[step];
+            const requiredInputs = currentStepElement.querySelectorAll('[required]');
+
+            requiredInputs.forEach(input => {
+                if (input.type === 'radio') {
+                    const radioGroupName = input.name;
+                    const radioGroup = document.querySelectorAll(`input[name="${radioGroupName}"]`);
+                    const isRadioChecked = Array.from(radioGroup).some(radio => radio.checked);
+                    if (!isRadioChecked) {
+                        isValid = false;
+                        // Pas de bordure rouge pour les radios, mais un message d'erreur
+                    }
+                } else if (!input.value.trim()) {
+                    input.classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    input.classList.remove('border-red-500');
+                }
+            });
+
+            // Validation spécifique pour les budgets min/max
+            if (step === 3) {
+                const budgetMin = parseFloat(document.getElementById('budgetMin').value);
+                const budgetMax = parseFloat(document.getElementById('budgetMax').value);
+                if (budgetMin > budgetMax) {
+                    showMessage("Le budget minimum ne peut pas être supérieur au budget maximum.", 'error');
+                    document.getElementById('budgetMin').classList.add('border-red-500');
+                    document.getElementById('budgetMax').classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    document.getElementById('budgetMin').classList.remove('border-red-500');
+                    document.getElementById('budgetMax').classList.remove('border-red-500');
+                }
+            }
+
+
+            if (!isValid) {
+                showMessage("Veuillez remplir tous les champs obligatoires et corriger les erreurs.", 'error');
+            }
+            return isValid;
+        }
+
+        // Passe à l'étape suivante
+        function nextStep() {
+            if (validateStep(currentStep)) {
+                if (currentStep < totalSteps + 1) { // +1 pour l'étape de révision
+                    currentStep++;
+                    updateFormUI();
+                }
+            }
+        }
+
+        // Revient à l'étape précédente
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateFormUI();
+            }
+        }
+
+        // Peuple l'étape de révision avec les données collectées
+        function populateReviewStep() {
+            // Étape 1
+            document.getElementById('reviewRequestType').textContent = document.querySelector('input[name="requestType"]:checked')?.value || 'N/A';
+
+            // Étape 2
+            document.getElementById('reviewCivility').textContent = document.querySelector('input[name="civility"]:checked')?.value || 'N/A';
+            document.getElementById('reviewLastName').textContent = document.getElementById('lastName').value || 'N/A';
+            document.getElementById('reviewFirstName').textContent = document.getElementById('firstName').value || 'N/A';
+            document.getElementById('reviewPhone').textContent = document.getElementById('phone').value || 'N/A';
+            document.getElementById('reviewEmail').textContent = document.getElementById('email').value || 'N/A';
+            document.getElementById('reviewOtherContact').textContent = document.getElementById('otherContact').value || 'N/A';
+            document.getElementById('reviewReceiveMailInfo').textContent = document.querySelector('input[name="receiveMailInfo"]:checked')?.value || 'N/A';
+            document.getElementById('reviewCityOfResidence').textContent = document.getElementById('cityOfResidence').value || 'N/A';
+
+            // Étape 3
+            document.getElementById('reviewSchoolCampus').textContent = document.getElementById('schoolCampus').value || 'N/A';
+            document.getElementById('reviewBudgetMin').textContent = document.getElementById('budgetMin').value || 'N/A';
+            document.getElementById('reviewBudgetMax').textContent = document.getElementById('budgetMax').value || 'N/A';
+            document.getElementById('reviewResidenceType').textContent = document.querySelector('input[name="residenceType"]:checked')?.value || 'N/A';
+
+            // Étape 4
+            document.getElementById('reviewGuarantor').textContent = document.querySelector('input[name="guarantor"]:checked')?.value || 'N/A';
+            document.getElementById('reviewRepresentativeName').textContent = document.getElementById('representativeName').value || 'N/A';
+        }
+
+        // Simule la soumission du formulaire
+        document.getElementById('bolounguiForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (validateStep(currentStep)) {
+                // Simule un appel API pour la soumission
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<div class="progress-spinner mr-2"></div> Soumission...';
+                submitBtn.disabled = true;
+
+                setTimeout(() => {
+                    showMessage('Votre demande a été soumise avec succès !', 'success');
+                    currentStep = 'success'; // Passe à l'état de succès
+                    updateFormUI(); // Met à jour l'interface pour afficher le message de succès
+
+                    // Réinitialise le bouton de soumission après le succès
+                    submitBtn.innerHTML = 'Soumettre la Demande <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>';
+                    submitBtn.disabled = false;
+                }, 2000); // Simule un appel API de 2 secondes
+            }
+        });
+
+        // Réinitialise le formulaire complet
+        function resetForm() {
+            document.getElementById('bolounguiForm').reset();
+            currentStep = 1;
+            updateFormUI();
+        }
+
+        // Initialisation à l'ouverture de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            updateFormUI(); // Affiche la première étape au chargement
         });
     </script>
 </body>
